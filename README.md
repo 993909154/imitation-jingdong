@@ -1,4 +1,4 @@
-# imitation
+# imitation-jingdong
 
 ## Project setup
 ```
