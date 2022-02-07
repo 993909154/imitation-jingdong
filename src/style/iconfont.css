@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'iconfont';
+    src: url('//at.alicdn.com/t/font_3171001_tfmo22f2gl8.woff2?t=1644230670889') format('woff2'),
+    url('//at.alicdn.com/t/font_3171001_tfmo22f2gl8.woff?t=1644230670889') format('woff'),
+    url('//at.alicdn.com/t/font_3171001_tfmo22f2gl8.ttf?t=1644230670889') format('truetype');
+}
+
+.iconfont {
+    font-family: "iconfont" !important;
+    font-size: 16px;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
