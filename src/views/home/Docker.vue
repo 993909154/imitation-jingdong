@@ -1,29 +1,41 @@
 <template>
   <div class="docker">
-    <div class="docker_item docker_item--active">
-      <div class="iconfont">&#xe692;</div>
-      <div class="docker_title">首页</div>
-    </div>
-    <div class="docker_item">
-      <div class="iconfont">&#xe62e;</div>
-      <div class="docker_title">购物车</div>
-    </div>
-    <div class="docker_item">
-      <div class="iconfont">&#xe713;</div>
-      <div class="docker_title">订单</div>
-    </div>
-    <div class="docker_item">
-      <div class="iconfont">&#xe7ae;</div>
-      <div class="docker_title">我的</div>
+    <div v-for="(item,index) in dockerList" :key="item.icon"
+         :class="{'docker_item' : true, 'docker_item--active': index === 0 }"
+    >
+      <div class="iconfont" v-html="item.icon"></div>
+      <div class="docker_title">{{ item.text }}</div>
     </div>
   </div>
 </template>
 <script>
 export default {
-  name: 'Docker'
+  name: 'Docker',
+  setup () {
+    const dockerList = [
+      {
+        icon: '&#xe692;',
+        text: '首页'
+      },
+      {
+        icon: '&#xe62e;',
+        text: '购物车'
+      },
+      {
+        icon: '&#xe713;',
+        text: '订单'
+      },
+      {
+        icon: '&#xe7ae;',
+        text: '我的'
+      }
+    ]
+    return { dockerList }
+  }
 }
+
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 @import "../../style/viriables";
 
 .docker {
