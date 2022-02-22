@@ -2,12 +2,12 @@
   <div class="content">
     <div class="category">
       <div :class="{'category_item': true, 'category_item-active': currentTab === item.tab}" v-for="item in categories"
-           :key="item.name" @click="() => handleCategoryClick(item.tab)">{{ item.name }}
+           :key="item.name" @click="() => handleTabClick(item.tab)">{{ item.name }}
       </div>
     </div>
     <div class="product">
-      <div class="product_item" v-for="item in contentList" :key="item._id">
-        <img class="product_item_img" src="http://www.dell-lee.com/imgs/vue3/near.png" alt="">
+      <div class="product_item" v-for="item in list" :key="item._id">
+        <img class="product_item_img" :src="item.imgUrl" alt="">
         <div class="product_item_detail">
           <h4 class="product_item_title">{{ item.name }}</h4>
           <p class="product_item_sales">月售 {{ item.sales }} 件</p>
@@ -17,9 +17,9 @@
           </p>
         </div>
         <div class="product_number">
-          <span class="product_number_minus">-</span>
-          <span class="product_number_counter">0</span>
-          <span class="product_number_add">+</span>
+          <span class="product_number_minus" @click="() => {changeCartItemInfor(shopId, item._id, item, -1)}">-</span>
+          <span class="product_number_counter">{{ cartList?.[shopId]?.[item._id]?.count || 0 }}</span>
+          <span class="product_number_add" @click="() => {changeCartItemInfor(shopId, item._id, item, 1)}">+</span>
         </div>
       </div>
     </div>
@@ -29,7 +29,8 @@
 <script>
 import { get } from '../../utils/request'
 import { useRoute } from 'vue-router'
-import { reactive, toRefs } from 'vue'
+import { reactive, ref, toRefs, watchEffect } from 'vue'
+import { useStore } from 'vuex'
 
 const categories = [
   {
@@ -44,35 +45,78 @@ const categories = [
     name: '新鲜水果',
     tab: 'fruit'
   }]
+// 切换tab相关的逻辑
+const useTabEffect = () => {
+  const currentTab = ref(categories[0].tab)
+  const handleTabClick = (tab) => {
+    currentTab.value = tab
+  }
+  return {
+    handleTabClick,
+    currentTab
+  }
+}
 
+// 展示content右边商品列表相关逻辑
+const useCurrentListEffect = (currentTab, shopId) => {
+  const content = reactive({
+    list: []
+  })
+  const getContentData = async () => {
+    const result = await get(`api/shop/${shopId}/products`, { tab: currentTab.value })
+    if (result?.errno === 0 && result?.data?.length) {
+      content.list = result.data
+    }
+  }
+  watchEffect(() => getContentData())
+  const {
+    list
+  } = toRefs(content)
+  return {
+    list
+  }
+}
+// 购物车相关逻辑
+const useCartEffect = () => {
+  const store = useStore()
+  const changeCartItemInfor = (shopId, productId, productInfo, num) => {
+    store.commit('changeCartItemInfor', {
+      shopId,
+      productId,
+      productInfo,
+      num
+    })
+  }
+  const { cartList } = toRefs(store.state)
+  return {
+    cartList,
+    changeCartItemInfor
+  }
+}
 export default {
   name: 'Content',
   setup () {
     const route = useRoute()
-    const data = reactive({
-      currentTab: categories[0].tab,
-      contentList: []
-    })
-    const getContentData = async (tab) => {
-      const result = await get(`api/shop/${route.params.id}/products`, { tab })
-      if (result?.errno === 0 && result?.data?.length) {
-        data.contentList = result.data
-      }
-    }
-    getContentData('all')
-    const handleCategoryClick = (tab) => {
-      getContentData(tab)
-      data.currentTab = tab
-    }
+    const shopId = route.params.id
     const {
-      contentList,
+      handleTabClick,
       currentTab
-    } = toRefs(data)
+    } = useTabEffect()
+    const {
+      list
+    } = useCurrentListEffect(currentTab, shopId)
+    const {
+      cartList,
+      changeCartItemInfor
+    } = useCartEffect()
     return {
-      contentList,
+      list,
       categories,
       currentTab,
-      handleCategoryClick
+      handleTabClick,
+      cartList,
+      shopId,
+      changeCartItemInfor
     }
   }
 }
