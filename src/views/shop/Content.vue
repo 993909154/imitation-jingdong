@@ -30,7 +30,7 @@
 import { get } from '../../utils/request'
 import { useRoute } from 'vue-router'
 import { reactive, ref, toRefs, watchEffect } from 'vue'
-import { useStore } from 'vuex'
+import { commonCartEffect } from './commonCartEffect'
 
 const categories = [
   {
@@ -76,23 +76,7 @@ const useCurrentListEffect = (currentTab, shopId) => {
     list
   }
 }
-// 购物车相关逻辑
-const useCartEffect = () => {
-  const store = useStore()
-  const changeCartItemInfor = (shopId, productId, productInfo, num) => {
-    store.commit('changeCartItemInfor', {
-      shopId,
-      productId,
-      productInfo,
-      num
-    })
-  }
-  const { cartList } = toRefs(store.state)
-  return {
-    cartList,
-    changeCartItemInfor
-  }
-}
+
 export default {
   name: 'Content',
   setup () {
@@ -108,7 +92,7 @@ export default {
     const {
       cartList,
       changeCartItemInfor
-    } = useCartEffect()
+    } = commonCartEffect()
     return {
       list,
       categories,
@@ -200,7 +184,6 @@ export default {
 
     &_yen {
       font-size: .12rem;
-      margin-right: .06rem;
     }
 
     &_origin {
@@ -208,6 +191,7 @@ export default {
       color: $light-fontColor;
       line-height: .2rem;
       text-decoration: line-through;
+      margin-left: .06rem;
     }
   }
 
