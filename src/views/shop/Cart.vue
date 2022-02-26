@@ -1,10 +1,22 @@
 <template>
+  <div class="mask" v-if="showCart" @click="handleCartShowChange"/>
   <div class="cart">
-    <div class="product">
+    <div class="product" v-if="showCart">
+      <div class="product_header">
+        <div class="product_header_all" @click="() => {setCartItemsChecked(shopId)}">
+          <span class="product_header_icon iconfont"
+                v-html="allChecked ? '&#xe70f;' : '&#xe619;'"
+          ></span>
+          全选
+        </div>
+        <div class="product_header_clear">
+          <span class="product_header_clear_btn" @click="() => {cleanCartProducts(shopId)}">清空购物车</span>
+        </div>
+      </div>
       <template v-for="item in productList" :key="item._id">
         <div class="product_item" v-if="item.count > 0">
           <div class="product_item_checked iconfont"
-               v-html="item.check ? '&#xe7e2;' : '&#xe6f7;'"
+               v-html="item.check ? '&#xe70f;' : '&#xe619;'"
                @click="() => {changeCartItemChecked(shopId, item._id)}"
           />
           <img class="product_item_img" :src="item.imgUrl" alt="">
@@ -25,19 +37,20 @@
     </div>
     <div class="check">
       <div class="check_icon">
-        <img class="check_icon_img" src="http://www.dell-lee.com/imgs/vue3/basket.png" alt="">
+        <img class="check_icon_img" src="http://www.dell-lee.com/imgs/vue3/basket.png" alt=""
+             @click="handleCartShowChange">
         <div class="check_icon_tag">{{ total }}</div>
       </div>
       <div class="check_info">总计：<span class="check_info_price">&yen;{{ totalPrice }}</span></div>
-      <div class="check_btn">去结算</div>
+      <div class="check_btn" @click="handleOrderCreation">去结算</div>
     </div>
   </div>
 </template>
 
 <script>
 import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
-import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { computed, ref } from 'vue'
 import { commonCartEffect } from './commonCartEffect'
 
 const useCartEffect = (shopId) => {
@@ -70,6 +83,20 @@ const useCartEffect = (shopId) => {
     }
     return count.toFixed(2)
   })
+  const allChecked = computed(() => {
+    const productList = cartList[shopId]
+    let result = true
+    if (productList) {
+      for (const i in productList) {
+        const product = productList[i]
+        if (product.count > 0 && !product.check) {
+          result = false
+        }
+      }
+    }
+    return result
+  })
+
   const productList = computed(() => {
     const productList = cartList[shopId] || []
     return productList
@@ -80,29 +107,70 @@ const useCartEffect = (shopId) => {
       productId
     })
   }
+  const cleanCartProducts = (shopId) => {
+    store.commit('cleanCartProducts', {
+      shopId
+    })
+  }
+  const setCartItemsChecked = (shopId) => {
+    store.commit('setCartItemsChecked', {
+      shopId
+    })
+  }
   return {
     total,
     totalPrice,
     productList,
-    changeCartItemChecked
+    changeCartItemChecked,
+    cleanCartProducts,
+    allChecked,
+    setCartItemsChecked
   }
 }
 
+// 展示隐藏购物车逻辑
+const toggleCartEffect = () => {
+  const showCart = ref(false)
+  const handleCartShowChange = () => {
+    showCart.value = !showCart.value
+  }
+  return {
+    showCart,
+    handleCartShowChange
+  }
+}
+
+// 跳转结算页面
+const OrderCreationEffect = () => {
+  const router = useRouter()
+  const handleOrderCreation = () => {
+    router.push({ name: 'Home' })
+  }
+  return { handleOrderCreation }
+}
 export default {
   name: 'Cart',
   setup () {
     const route = useRoute()
     const shopId = route.params.id
     const {
+      showCart,
+      handleCartShowChange
+    } = toggleCartEffect()
+    const {
       total,
       totalPrice,
       productList,
-      changeCartItemChecked
+      changeCartItemChecked,
+      cleanCartProducts,
+      allChecked,
+      setCartItemsChecked
     } = useCartEffect(shopId)
     const {
       cartList,
       changeCartItemInfor
     } = commonCartEffect()
+    const { handleOrderCreation } = OrderCreationEffect()
     return {
       total,
       totalPrice,
@@ -110,7 +178,13 @@ export default {
       cartList,
       shopId,
       changeCartItemInfor,
-      changeCartItemChecked
+      changeCartItemChecked,
+      cleanCartProducts,
+      allChecked,
+      setCartItemsChecked,
+      showCart,
+      handleCartShowChange,
+      handleOrderCreation
     }
   }
 
@@ -121,6 +195,16 @@ export default {
 @import "../../style/viriables";
 @import "../../style/mixins";
 
+.mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.50);
+  z-index: 1;
+}
+
 .cart {
   position: absolute;
   left: 0;
@@ -128,12 +212,40 @@ export default {
   bottom: 0;
   box-shadow: 0 -1px 1px 0 $content-bgColor;
   background-color: $white-fontColor;
+  z-index: 2;
 }
 
 .product {
   flex: 1;
   overflow-y: scroll;
   background: $bgColor;
+
+  &_header {
+    display: flex;
+    line-height: .52rem;
+    border-bottom: .01rem solid $content-bgColor;
+    font-size: .14rem;
+    color: $content-fontcolor;
+    margin: 0 .16rem;
+
+    &_all {
+      width: .64rem;
+    }
+
+    &_icon {
+      color: $btn-bgColor;
+      font-size: .2rem;
+    }
+
+    &_clear {
+      flex: 1;
+      text-align: right;
+
+      &_btn {
+        display: inline-block;
+      }
+    }
+  }
 
   &_item {
     position: relative;
@@ -189,7 +301,8 @@ export default {
 
   &_number {
     position: absolute;
-    bottom: .12rem;
+    top: 50%;
+    transform: translateY(-50%);
     right: 0;
 
     &_minus, &_add {
