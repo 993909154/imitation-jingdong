@@ -18,7 +18,7 @@
         </div>
         <div class="product_number">
           <span class="product_number_minus" @click="() => {changeCartItemInfor(shopId, item._id, item, -1)}">-</span>
-          <span class="product_number_counter">{{ cartList?.[shopId]?.[item._id]?.count || 0 }}</span>
+          <span class="product_number_counter">{{ cartList?.[shopId]?.productList?.[item._id]?.count || 0 }}</span>
           <span class="product_number_add" @click="() => {changeCartItemInfor(shopId, item._id, item, 1)}">+</span>
         </div>
       </div>
@@ -68,7 +68,9 @@ const useCurrentListEffect = (currentTab, shopId) => {
       content.list = result.data
     }
   }
-  watchEffect(() => getContentData())
+  watchEffect(() => {
+    getContentData()
+  })
   const {
     list
   } = toRefs(content)
