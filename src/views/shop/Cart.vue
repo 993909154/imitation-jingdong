@@ -55,7 +55,11 @@ import { commonCartEffect } from './commonCartEffect'
 
 const useCartEffect = (shopId) => {
   const store = useStore()
-  const cartList = store.state.cartList
+  const {
+    cartList,
+    changeCartItemInfor
+  } = commonCartEffect()
+  console.log(cartList)
   const calculations = computed(() => {
     const productList = cartList[shopId]
     const result = { total: 0, totalPrice: 0, allChecked: true }
@@ -102,7 +106,8 @@ const useCartEffect = (shopId) => {
     productList,
     changeCartItemChecked,
     cleanCartProducts,
-    setCartItemsChecked
+    setCartItemsChecked,
+    changeCartItemInfor
   }
 }
 
@@ -140,18 +145,13 @@ export default {
       productList,
       changeCartItemChecked,
       cleanCartProducts,
-      setCartItemsChecked
-    } = useCartEffect(shopId)
-
-    const {
-      cartList,
+      setCartItemsChecked,
       changeCartItemInfor
-    } = commonCartEffect()
+    } = useCartEffect(shopId)
     const { handleOrderCreation } = OrderCreationEffect()
     return {
       calculations,
       productList,
-      cartList,
       shopId,
       changeCartItemInfor,
       changeCartItemChecked,
@@ -303,9 +303,12 @@ export default {
     }
 
     &_counter {
+      display: inline-block;
+      text-align: center;
       line-height: .2rem;
       font-size: .14rem;
       color: $content-fontcolor;
+      width: .2rem;
     }
   }
 
