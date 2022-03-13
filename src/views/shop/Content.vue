@@ -223,9 +223,12 @@ export default {
     }
 
     &_counter {
+      display: inline-block;
+      text-align: center;
       line-height: .2rem;
       font-size: .14rem;
       color: $content-fontcolor;
+      width: .2rem;
     }
   }
 
