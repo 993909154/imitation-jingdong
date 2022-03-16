@@ -42,7 +42,7 @@
         <div class="check_icon_tag">{{ calculations.total }}</div>
       </div>
       <div class="check_info">总计：<span class="check_info_price">&yen;{{ calculations.totalPrice }}</span></div>
-      <div class="check_btn" @click="handleOrderCreation">去结算</div>
+      <div class="check_btn" @click="handleOrderCreation()">去结算</div>
     </div>
   </div>
 </template>
@@ -51,18 +51,22 @@
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
 import { computed, ref } from 'vue'
-import { commonCartEffect } from './commonCartEffect'
+import { commonCartEffect } from '../../effects/cartEffect'
 
 const useCartEffect = (shopId) => {
   const store = useStore()
   const {
     cartList,
+    productList,
     changeCartItemInfor
-  } = commonCartEffect()
-  console.log(cartList)
+  } = commonCartEffect(shopId)
   const calculations = computed(() => {
     const productList = cartList[shopId]?.productList
-    const result = { total: 0, totalPrice: 0, allChecked: true }
+    const result = {
+      total: 0,
+      totalPrice: 0,
+      allChecked: true
+    }
     if (productList) {
       for (const i in productList) {
         const product = productList[i]
@@ -81,10 +85,7 @@ const useCartEffect = (shopId) => {
     result.totalPrice = result.totalPrice.toFixed(2)
     return result
   })
-  const productList = computed(() => {
-    const productList = cartList[shopId]?.productList || []
-    return productList
-  })
+
   const changeCartItemChecked = (shopId, productId) => {
     store.commit('changeCartItemChecked', {
       shopId,
@@ -124,10 +125,10 @@ const toggleCartEffect = () => {
 }
 
 // 跳转结算页面
-const OrderCreationEffect = () => {
+const OrderCreationEffect = (shopId) => {
   const router = useRouter()
   const handleOrderCreation = () => {
-    router.push({ name: 'Home' })
+    router.push({ path: `/orderConfirmation/${shopId}` })
   }
   return { handleOrderCreation }
 }
@@ -148,7 +149,7 @@ export default {
       setCartItemsChecked,
       changeCartItemInfor
     } = useCartEffect(shopId)
-    const { handleOrderCreation } = OrderCreationEffect()
+    const { handleOrderCreation } = OrderCreationEffect(shopId)
     return {
       calculations,
       productList,

@@ -30,7 +30,7 @@
 import { get } from '../../utils/request'
 import { useRoute } from 'vue-router'
 import { reactive, ref, toRefs, watchEffect } from 'vue'
-import { commonCartEffect } from './commonCartEffect'
+import { commonCartEffect } from '../../effects/cartEffect'
 import { useStore } from 'vuex'
 
 const categories = [
