@@ -9,7 +9,7 @@
         <div class="top_receiver_title">收货地址</div>
         <div class="top_receiver_adress">北京理工大学国防科技园2号楼10层</div>
         <div class="top_receiver_info">
-          <span class="top_receiver_info_name">瑶妹（先生）</span>
+          <span class="top_receiver_info_name">瑶妹</span>
           <span class="top_receiver_info_phone">18911024266</span>
         </div>
         <div class="top_receiver_info_choose iconfont">&#xe6db;</div>
