@@ -50,41 +50,16 @@
 <script>
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { commonCartEffect } from '../../effects/cartEffect'
 
 const useCartEffect = (shopId) => {
   const store = useStore()
   const {
-    cartList,
     productList,
-    changeCartItemInfor
+    changeCartItemInfor,
+    calculations
   } = commonCartEffect(shopId)
-  const calculations = computed(() => {
-    const productList = cartList[shopId]?.productList
-    const result = {
-      total: 0,
-      totalPrice: 0,
-      allChecked: true
-    }
-    if (productList) {
-      for (const i in productList) {
-        const product = productList[i]
-        result.total += product.count
-        if (product.check) {
-          result.totalPrice += (product.count * product.price)
-        }
-        if (product.count > 0 && !product.check) {
-          result.allChecked = false
-        }
-      }
-      if (result.total >= 100) {
-        result.total = 99 + '+'
-      }
-    }
-    result.totalPrice = result.totalPrice.toFixed(2)
-    return result
-  })
 
   const changeCartItemChecked = (shopId, productId) => {
     store.commit('changeCartItemChecked', {
