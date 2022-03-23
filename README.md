@@ -11,7 +11,7 @@ git clone git@github.com:AlexL0ng/imitation-jingdong.git
 #### Install dependecies
 
 ```angular2html
-yarn build
+yarn install
 ```
 
 #### Run serve

@@ -162,7 +162,7 @@ export default {
   right: 0;
   bottom: 0;
   box-shadow: 0 -1px 1px 0 $content-bgColor;
-  background-color: $white-fontColor;
+  background-color: $bgColor;
   z-index: 2;
 }
 
@@ -325,7 +325,7 @@ export default {
 
   &_info {
     flex: 1;
-    color: #333333;
+    color: $content-fontcolor;
     font-size: .12rem;
 
     &_price {
