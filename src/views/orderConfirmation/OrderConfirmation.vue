@@ -4,7 +4,6 @@
     <ProductList/>
     <Order/>
   </div>
-  <div class="mask"></div>
 </template>
 
 <script>
