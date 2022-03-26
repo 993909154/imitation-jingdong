@@ -80,7 +80,7 @@ export default {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    background-color: #FFFFFF;
+    background-color: $bgColor;
     border-radius: .04rem;
     width: 3.01rem;
     height: 1.57rem;
@@ -107,7 +107,7 @@ export default {
 
     &_btn {
       flex: 1;
-      border: .01rem solid #4FB0F9;
+      border: .01rem solid $btn-bgColor-aqua;
       border-radius: .16rem;
       width: .8rem;
       line-height: .32rem;
@@ -117,8 +117,8 @@ export default {
         margin-right: .24rem;
       }
       &-confirm {
-        color: #FFFFFF;
-        background-color: #4FB0F9;
+        color: $white-fontColor;
+        background-color: $btn-bgColor-aqua;
       }
     }
   }
