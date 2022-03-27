@@ -38,7 +38,7 @@ export default {
   position: relative;
   height: 1.96rem;
   background-size: 100% 1.59rem;
-  background-image: linear-gradient(0deg, rgba(0, 145, 255, 0.00) 4%, #0091FF 50%);
+  background-image: linear-gradient(0deg, rgba(0, 145, 255, 0.00) 4%, $btn-bgColor 50%);
   background-repeat: no-repeat;
 
   &_header {
@@ -87,7 +87,7 @@ export default {
       &_name, &_phone {
         line-height: .18rem;
         font-size: .12rem;
-        color: #666;
+        color: $medium-fontColor;
         margin-right: .06rem;
       }
 
@@ -95,7 +95,7 @@ export default {
         position: absolute;
         right: .16rem;
         top: .5rem;
-        color: #666;
+        color: $medium-fontColor;
         font-size: .2rem;
         transform: rotate(180deg);
       }

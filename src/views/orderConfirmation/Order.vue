@@ -88,14 +88,14 @@ export default {
 
     &_title {
       font-size: .18rem;
-      color: #333333;
+      color: $content-fontcolor;
       margin: .24rem 0 0;
       line-height: .25rem;
     }
 
     &_desc {
       font-size: .14rem;
-      color: #666666;
+      color: $medium-fontColor;
       margin-top: .08rem;
     }
 
@@ -113,7 +113,7 @@ export default {
       line-height: .32rem;
       font-size: .14rem;
       &-cancellation {
-        color: #0091FF;
+        color: $btn-bgColor;
         margin-right: .24rem;
       }
       &-confirm {
