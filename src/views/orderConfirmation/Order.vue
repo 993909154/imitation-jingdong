@@ -8,8 +8,8 @@
       <h3 class="mask_content_title">确认要离开收银台？</h3>
       <p class="mask_content_desc">请尽快完成支付，否则将被取消</p>
       <div class="mask_content_btns">
-        <div class="mask_content_btn mask_content_btn-cancellation">取消订单</div>
-        <div class="mask_content_btn mask_content_btn-confirm">确认支付</div>
+        <div class="mask_content_btn mask_content_btn-cancel" @click="handlCancelOrder">取消订单</div>
+        <div class="mask_content_btn mask_content_btn-confirm" @click="handlConfirmOrder">确认支付</div>
       </div>
     </div>
   </div>
@@ -18,17 +18,52 @@
 <script>
 import { useRoute } from 'vue-router'
 import { commonCartEffect } from '../../effects/cartEffect'
+import { post } from '../../utils/request'
 
 export default {
   name: 'Order',
   setup () {
     const route = useRoute()
-    const shopId = route.params.id
+    const shopId = parseInt(route.params.id, 10)
+    const handlCancelOrder = () => {
+    }
     const {
-      calculations
+      calculations,
+      shopName,
+      productList
     } = commonCartEffect(shopId)
+    const handlConfirmOrder = async () => {
+      const products = []
+      for (const i in productList.value) {
+        const product = productList.value[i]
+        products.push({
+          id: product._id,
+          num: product.count
+        })
+      }
+      try {
+        const result = await post('/api/order', {
+          addressId: 1,
+          shopId,
+          shopName: shopName.value,
+          isCancel: false,
+          products
+        })
+        //   if (result?.errno === 0) {
+        //     localStorage.isLogin = true
+        //     router.push({ name: 'Home' })
+        //   } else {
+        //     showToast('登录失败')
+        //   }
+        console.log(result)
+      } catch (e) {
+        console.log(e)
+      }
+    }
     return {
-      calculations
+      calculations,
+      handlCancelOrder,
+      handlConfirmOrder
     }
   }
 }
@@ -107,15 +142,17 @@ export default {
 
     &_btn {
       flex: 1;
-      border: .01rem solid $btn-bgColor-aqua;
       border-radius: .16rem;
       width: .8rem;
       line-height: .32rem;
       font-size: .14rem;
-      &-cancellation {
+
+      &-cancel {
+        border: .01rem solid $btn-bgColor-aqua;
         color: $btn-bgColor;
         margin-right: .24rem;
       }
+
       &-confirm {
         color: $white-fontColor;
         background-color: $btn-bgColor-aqua;
