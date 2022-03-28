@@ -40,7 +40,7 @@
         <div class="check_icon_tag">{{ calculations.total }}</div>
       </div>
       <div class="check_info">总计：<span class="check_info_price">&yen;{{ calculations.totalPrice }}</span></div>
-      <div class="check_btn" @click="handleOrderCreation()">去结算</div>
+      <div class="check_btn" @click="handleOrderCreation()" v-show="calculations.total > 0">去结算</div>
     </div>
   </div>
 </template>
