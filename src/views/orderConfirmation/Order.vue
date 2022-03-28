@@ -24,54 +24,63 @@ import Toast, { useToastEffect } from '../../components/Toast'
 import { useStore } from 'vuex'
 import { ref } from 'vue'
 
+const useMaskOrderEffect = (shopName, productList, shopId) => {
+  const router = useRouter()
+  const store = useStore()
+  const {
+    toastMessage,
+    show,
+    showToast
+  } = useToastEffect()
+  const handlConfirmOrder = async (isCancel) => {
+    const products = []
+    for (const i in productList.value) {
+      const product = productList.value[i]
+      products.push({
+        id: product._id,
+        num: product.count
+      })
+    }
+    try {
+      const result = await post('/api/order', {
+        addressId: 1,
+        shopId,
+        shopName: shopName.value,
+        isCancel,
+        products
+      })
+      if (result?.errno === 0) {
+        store.commit('clearCartData', { shopId })
+        router.push({ name: 'OrderList' })
+      }
+    } catch (e) {
+      console.log(e)
+      showToast('下单失败')
+    }
+  }
+  return { toastMessage, show, handlConfirmOrder }
+}
+
+const useShowMaskEffect = () => {
+  const showConfirm = ref(false)
+  const handleSubmitClick = (state) => {
+    showConfirm.value = state
+  }
+  return { showConfirm, handleSubmitClick }
+}
 export default {
   name: 'Order',
   components: { Toast },
   setup () {
     const route = useRoute()
-    const router = useRouter()
     const shopId = parseInt(route.params.id, 10)
-    const store = useStore()
-    const showConfirm = ref(false)
     const {
       calculations,
       shopName,
       productList
     } = commonCartEffect(shopId)
-    const handleSubmitClick = (state) => {
-      showConfirm.value = state
-    }
-    const {
-      toastMessage,
-      show,
-      showToast
-    } = useToastEffect()
-    const handlConfirmOrder = async (isCancel) => {
-      const products = []
-      for (const i in productList.value) {
-        const product = productList.value[i]
-        products.push({
-          id: product._id,
-          num: product.count
-        })
-      }
-      try {
-        const result = await post('/api/order', {
-          addressId: 1,
-          shopId,
-          shopName: shopName.value,
-          isCancel,
-          products
-        })
-        if (result?.errno === 0) {
-          store.commit('clearCartData', { shopId })
-          router.push({ name: 'Home' })
-        }
-      } catch (e) {
-        console.log(e)
-        showToast('下单失败')
-      }
-    }
+    const { toastMessage, show, handlConfirmOrder } = useMaskOrderEffect(shopName, productList, shopId)
+    const { showConfirm, handleSubmitClick } = useShowMaskEffect()
     return {
       calculations,
       handlConfirmOrder,
