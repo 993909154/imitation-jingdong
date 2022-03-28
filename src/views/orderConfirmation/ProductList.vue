@@ -3,8 +3,7 @@
     <div class="products_title">{{ shopName }}</div>
     <div class="products_wrapper">
       <div class="products_list">
-        <tempalte v-for="item in productList" :key="item._id">
-          <div class="products_item" v-if="item.count > 0">
+          <div v-for="item in productList" :key="item._id" class="products_item">
             <img class="products_item_img" :src="item.imgUrl" alt="">
             <div class="products_item_detail">
               <h4 class="products_item_title">{{ item.name }}</h4>
@@ -20,7 +19,6 @@
               </p>
             </div>
           </div>
-        </tempalte>
         <div class="products_item_statistics">
           <div class="products_item_weight">
             <div class="products_item_weight_title">共计3件/1.4kg</div>

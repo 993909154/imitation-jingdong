@@ -8,31 +8,40 @@
       <h3 class="mask_content_title">确认要离开收银台？</h3>
       <p class="mask_content_desc">请尽快完成支付，否则将被取消</p>
       <div class="mask_content_btns">
-        <div class="mask_content_btn mask_content_btn-cancel" @click="handlCancelOrder">取消订单</div>
-        <div class="mask_content_btn mask_content_btn-confirm" @click="handlConfirmOrder">确认支付</div>
+        <div class="mask_content_btn mask_content_btn-cancel" @click="() => handlConfirmOrder(true)">取消订单</div>
+        <div class="mask_content_btn mask_content_btn-confirm" @click="() => handlConfirmOrder(false)">确认支付</div>
       </div>
     </div>
   </div>
+  <Toast v-if="show" :message="toastMessage"/>
 </template>
 
 <script>
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { commonCartEffect } from '../../effects/cartEffect'
 import { post } from '../../utils/request'
+import Toast, { useToastEffect } from '../../components/Toast'
+import { useStore } from 'vuex'
 
 export default {
   name: 'Order',
+  components: { Toast },
   setup () {
     const route = useRoute()
+    const router = useRouter()
     const shopId = parseInt(route.params.id, 10)
-    const handlCancelOrder = () => {
-    }
+    const store = useStore()
     const {
       calculations,
       shopName,
       productList
     } = commonCartEffect(shopId)
-    const handlConfirmOrder = async () => {
+    const {
+      toastMessage,
+      show,
+      showToast
+    } = useToastEffect()
+    const handlConfirmOrder = async (isCancel) => {
       const products = []
       for (const i in productList.value) {
         const product = productList.value[i]
@@ -46,24 +55,23 @@ export default {
           addressId: 1,
           shopId,
           shopName: shopName.value,
-          isCancel: false,
+          isCancel,
           products
         })
-        //   if (result?.errno === 0) {
-        //     localStorage.isLogin = true
-        //     router.push({ name: 'Home' })
-        //   } else {
-        //     showToast('登录失败')
-        //   }
-        console.log(result)
+        if (result?.errno === 0) {
+          store.commit('clearCartData', { shopId })
+          router.push({ name: 'Home' })
+        }
       } catch (e) {
         console.log(e)
+        showToast('下单失败')
       }
     }
     return {
       calculations,
-      handlCancelOrder,
-      handlConfirmOrder
+      handlConfirmOrder,
+      toastMessage,
+      show
     }
   }
 }

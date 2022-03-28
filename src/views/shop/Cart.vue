@@ -13,8 +13,7 @@
           <span class="product_header_clear_btn" @click="() => {cleanCartProducts(shopId)}">清空购物车</span>
         </div>
       </div>
-      <template v-for="item in productList" :key="item._id">
-        <div class="product_item" v-if="item.count > 0">
+        <div v-for="item in productList" :key="item._id" class="product_item">
           <div class="product_item_checked iconfont"
                v-html="item.check ? '&#xe70f;' : '&#xe619;'"
                @click="() => {changeCartItemChecked(shopId, item._id)}"
@@ -33,7 +32,6 @@
             <span class="product_number_add" @click="() => {changeCartItemInfor(shopId, item._id, item, 1)}">+</span>
           </div>
         </div>
-      </template>
     </div>
     <div class="check">
       <div class="check_icon">

@@ -87,6 +87,10 @@ export default createStore({
       shopInfo.shopName = shopName
       state.cartList[shopId] = shopInfo
       setLocalCartList(state)
+    },
+    clearCartData (state, payload) {
+      const { shopId } = payload
+      state.cartList[shopId].productList = {}
     }
   },
   actions: {},
