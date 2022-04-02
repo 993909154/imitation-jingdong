@@ -3,7 +3,7 @@
     <div class="products_title">{{ shopName }}</div>
     <div class="products_wrapper">
       <div class="products_list">
-        <template v-for="(item, index) in productList" :key="item._id">
+        <template v-for="(item, index) in productListArr" :key="item._id">
           <div class="products_item" v-if="index <= isShowProducts">
             <img class="products_item_img" :src="item.imgUrl" alt="">
             <div class="products_item_detail">
@@ -23,7 +23,7 @@
         </template>
         <div class="products_item_statistics">
           <div class="products_item_weight" @click="handleExpand">
-            <div class="products_item_weight_title">共计{{ orderProducts }}件/1.4kg</div>
+            <div class="products_item_weight_title">共计{{ totalNum }}件/1.4kg</div>
             <div class="products_item_weight_pulldown iconfont">&#xe6db;</div>
           </div>
         </div>
@@ -35,22 +35,35 @@
 <script>
 import { useRoute } from 'vue-router'
 import { commonCartEffect } from '../../effects/cartEffect'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
-const useOrderExpandEffect = (orderProducts) => {
-  const isShowProducts = ref(2)
+const useOrderExpandEffect = (productList) => {
+  // 封装productList保证index按照顺序排列
+  const productListArr = Object.values(productList.value)
+  const orderProducts = productListArr.length
+  const isShowProducts = ref(1)
   const handleExpand = () => {
     if (isShowProducts.value !== orderProducts) {
       isShowProducts.value = orderProducts
     } else {
-      isShowProducts.value = 2
+      isShowProducts.value = 1
     }
   }
+  const totalNum = computed(() => {
+    let total = 0
+    for (const i of productListArr) {
+      total += i.count
+    }
+    return total
+  })
   return {
     handleExpand,
-    isShowProducts
+    isShowProducts,
+    productListArr,
+    totalNum
   }
 }
+
 export default {
   name: 'ProductList',
   setup () {
@@ -60,18 +73,18 @@ export default {
       productList,
       shopName
     } = commonCartEffect(shopId)
-    const orderProducts = Object.keys(productList.value).length
     const {
       handleExpand,
-      isShowProducts
-    } = useOrderExpandEffect(orderProducts)
-    console.log(isShowProducts)
+      isShowProducts,
+      productListArr,
+      totalNum
+    } = useOrderExpandEffect(productList)
     return {
-      productList,
+      productListArr,
       shopName,
-      orderProducts,
       handleExpand,
-      isShowProducts
+      isShowProducts,
+      totalNum
     }
   }
 }

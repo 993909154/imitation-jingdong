@@ -1,5 +1,6 @@
-# imitation of JD 
-A study program modeled after JD
+# Overview
+A study program modeled after JD.
+
 
 # Install Steps
 
