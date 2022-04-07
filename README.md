@@ -1,6 +1,8 @@
 # Overview
 A study program modeled after JD.The project is for learn Vue.
 This is a `mobile website`.
+
+(国内朋友需要科学上网才能把图片加载出来吧。)
 # Feature
 ## Login
 ![login page](picOfREADME/login.png)
